@@ -246,7 +246,7 @@ footer{border-top:1px solid var(--line);padding-block:26px calc(34px + env(safe-
         <span class="ln"><span>pronto para a sua</span></span>
         <span class="ln"><span><em>aprovação.</em></span></span>
       </h1>
-      <p class="lede">Assista ao vídeo, leia a legenda e diga se está tudo certo ou o que precisa mudar. Leva menos de dois minutos.</p>
+      <p class="lede">Assista aos vídeos, leia as legendas e diga se está tudo certo ou o que precisa mudar. Leva poucos minutos.</p>
       <div class="readouts" aria-label="Resumo da rodada">
         <div class="ro"><small>Rodada</small><strong id="date">27 · 10 · 26</strong></div>
         <div class="ro"><small>Vídeos</small><strong id="nvid">01</strong></div>
@@ -310,6 +310,15 @@ var VIDEOS = [
       "##Dra. Jackeline Lima\n⚖️ OAB-MG 180.774"
     ]}
 ];
+VIDEOS.push({ id:"paulo-aposentadoria-especial", title:"Aposentadoria Especial",
+  who:"Dr. Paulo Barreiro", oab:"OAB-MG 171.544", src:"video2.mp4", poster:"poster2.jpg",
+  caption:[
+    "Trabalhou a vida inteira num lugar insalubre?\nIsso pode fazer diferença na sua aposentadoria.",
+    "Importante: as regras da aposentadoria especial mudaram com a Reforma da Previdência.",
+    "Se você já tinha tempo de contribuição antes de 13/11/2019, pode ter direito a regras de transição",
+    "@@Em caso de dúvidas sobre a sua situação, consulte um advogado de sua confiança",
+    "##⚖️ Dr. Paulo Barreiro\nOAB-MG 171.544"
+  ]});
 var MAXN = 600;
 
 /* ====== utilidades ====== */
@@ -349,7 +358,7 @@ var chk='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="cur
 function capHtml(v){return v.caption.map(function(p){
   if(p.indexOf("@@")===0)return '<p class="fine">'+esc(p.slice(2))+'</p>';
   if(p.indexOf("##")===0)return '<p class="sign">'+esc(p.slice(2)).replace(/\n/g,"<br>")+'</p>';
-  return '<p>'+esc(p)+'</p>'}).join("")}
+  return '<p>'+esc(p).replace(/\n/g,"<br>")+'</p>'}).join("")}
 function capPlain(v){return v.caption.map(function(p){return p.replace(/^(@@|##)/,"")}).join("\n\n")}
 
 VIDEOS.forEach(function(v,i){
