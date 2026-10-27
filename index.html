@@ -195,7 +195,7 @@ textarea:focus{outline:0;border-color:var(--gold-hi);box-shadow:0 0 0 3px rgba(1
 .go{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;border-radius:999px;border:0;background:linear-gradient(135deg,#D8B988,#A97F4E);color:var(--ink);font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:13px;text-decoration:none;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 10px 40px -10px rgba(169,127,78,.7);transition:transform .3s}
 .go:hover{transform:translateY(-2px)}
 .go[aria-disabled="true"]{background:rgba(250,249,245,.08);color:var(--muted);box-shadow:none;cursor:not-allowed;transform:none}
-.go.sent{background:var(--ok);}
+.go.sent,.go.sent[aria-disabled="true"]{background:var(--ok);color:var(--ink);box-shadow:none;cursor:default}
 footer{border-top:1px solid var(--line);padding-block:26px calc(34px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12px;letter-spacing:.12em}
 
 @media (max-width:900px){
@@ -456,7 +456,7 @@ function wireDecision(el,v){
 /* ====== resumo / envio ====== */
 function complete(){return VIDEOS.every(function(v){var a=state.answers[v.id];return a&&(a.s==="aprovado"||(a.s==="alteracao"&&a.a&&a.a.trim()))})}
 function counts(){var done=0,ok=0;VIDEOS.forEach(function(v){var a=state.answers[v.id];if(!a)return;if(a.s==="aprovado"){done++;ok++}else if(a.s==="alteracao"&&a.a&&a.a.trim())done++});return {done:done,ok:ok}}
-function payload(){return {sid:state.sid,aprovador:APROVADOR,itens:VIDEOS.map(function(v){var a=state.answers[v.id]||{};return {v:v.who+" · "+v.title,s:a.s==="aprovado"?"Aprovado":"Alteração solicitada",a:a.s==="alteracao"?(a.a||"").trim():""}})}}
+function payload(){return {sid:state.sid+"-"+(state.n||0),aprovador:APROVADOR,itens:VIDEOS.map(function(v){var a=state.answers[v.id]||{};return {v:v.who+" · "+v.title,s:a.s==="aprovado"?"Aprovado":"Alteração solicitada",a:a.s==="alteracao"?(a.a||"").trim():""}})}}
 function sendUrl(){return ENDPOINT+(ENDPOINT.indexOf("?")>-1?"&":"?")+"d="+encodeURIComponent(JSON.stringify(payload()))}
 function refresh(){
   var c=counts();
@@ -465,17 +465,18 @@ function refresh(){
   sum.innerHTML=VIDEOS.map(function(v,i){var a=state.answers[v.id]||{};var cls=a.s==="aprovado"?"s-ok":(a.s==="alteracao"?"s-ch":"s-no");var t=a.s==="aprovado"?"Aprovado":(a.s==="alteracao"?"Alterações solicitadas":"Sem resposta");
     return '<li><span class="'+cls+'">● '+t+'</span><span>Vídeo '+String(i+1).padStart(2,"0")+' · '+esc(v.title)+'</span></li>'}).join("");
   var ready=complete();
-  go.setAttribute("aria-disabled",String(!ready));
+  go.setAttribute("aria-disabled",String(!ready||!!state.sent));
   go.classList.toggle("sent",ready&&state.sent);
   if(!ready){sendmsg.textContent="Responda todos os vídeos para liberar o envio.";go.removeAttribute("target");go.setAttribute("href","#send");go.firstChild.textContent="Enviar à Leticia "}
-  else if(state.sent){sendmsg.textContent="Respostas enviadas para a Leticia. Obrigado!";go.firstChild.textContent="Enviar de novo "}
+  else if(state.sent){sendmsg.textContent="Respostas enviadas para a Leticia. Obrigado!";go.firstChild.textContent="Enviado "}
+  else if(state.n){sendmsg.textContent="Você alterou suas respostas. Envie novamente para atualizar.";go.firstChild.textContent="Enviar novamente "}
   else{sendmsg.textContent="Tudo respondido. Confira o resumo e envie para a Leticia.";go.firstChild.textContent="Enviar à Leticia "}
-  if(ready&&ENDPOINT){go.setAttribute("href",sendUrl());go.setAttribute("target","_blank");go.setAttribute("rel","noopener")}
+  if(!ready&&state.n)go.firstChild.textContent="Enviar novamente ";if(ready&&ENDPOINT){go.setAttribute("href",sendUrl());go.setAttribute("target","_blank");go.setAttribute("rel","noopener")}
 }
 go.addEventListener("click",function(e){
   e.preventDefault();if(go.getAttribute("aria-disabled")==="true"||window.__snd)return;
   if(!ENDPOINT){e.preventDefault();copyText(JSON.stringify(payload(),null,2),go,"Copiar");sendmsg.textContent="Envio ainda não conectado à planilha. O resumo foi copiado.";return}
-  window.__snd=true;go.firstChild.textContent="Enviando… ";sendmsg.textContent="Enviando suas respostas…";fetch(sendUrl(),{mode:"no-cors",cache:"no-store"}).then(function(){window.__snd=false;state.sent=true;save();refresh()},function(){window.__snd=false;go.firstChild.textContent="Tentar de novo ";sendmsg.textContent="Não foi possível enviar agora. Verifique a conexão e toque de novo."});
+  window.__snd=true;go.firstChild.textContent="Enviando… ";sendmsg.textContent="Enviando suas respostas…";fetch(sendUrl(),{mode:"no-cors",cache:"no-store"}).then(function(){window.__snd=false;state.sent=true;state.n=(state.n||0)+1;save();refresh()},function(){window.__snd=false;go.firstChild.textContent="Tentar de novo ";sendmsg.textContent="Não foi possível enviar agora. Verifique a conexão e toque de novo."});
 });
 function copyText(t,btn,label){
   function done(ok){var o=btn.textContent;if(btn.classList.contains("copy")){btn.textContent=ok?"Copiado":"Selecione e copie";setTimeout(function(){btn.textContent=label},1800)}}
