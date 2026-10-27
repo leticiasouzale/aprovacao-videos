@@ -468,14 +468,14 @@ function refresh(){
   go.setAttribute("aria-disabled",String(!ready));
   go.classList.toggle("sent",ready&&state.sent);
   if(!ready){sendmsg.textContent="Responda todos os vídeos para liberar o envio.";go.removeAttribute("target");go.setAttribute("href","#send");go.firstChild.textContent="Enviar à Leticia "}
-  else if(state.sent){sendmsg.textContent="Respostas enviadas. Uma aba de confirmação foi aberta. Se ela não apareceu, clique de novo no botão.";go.firstChild.textContent="Enviar de novo "}
+  else if(state.sent){sendmsg.textContent="Respostas enviadas para a Leticia. Obrigado!";go.firstChild.textContent="Enviar de novo "}
   else{sendmsg.textContent="Tudo respondido. Confira o resumo e envie para a Leticia.";go.firstChild.textContent="Enviar à Leticia "}
   if(ready&&ENDPOINT){go.setAttribute("href",sendUrl());go.setAttribute("target","_blank");go.setAttribute("rel","noopener")}
 }
 go.addEventListener("click",function(e){
-  if(go.getAttribute("aria-disabled")==="true"){e.preventDefault();return}
+  e.preventDefault();if(go.getAttribute("aria-disabled")==="true"||window.__snd)return;
   if(!ENDPOINT){e.preventDefault();copyText(JSON.stringify(payload(),null,2),go,"Copiar");sendmsg.textContent="Envio ainda não conectado à planilha. O resumo foi copiado.";return}
-  state.sent=true;save();setTimeout(refresh,60);
+  window.__snd=true;go.firstChild.textContent="Enviando… ";sendmsg.textContent="Enviando suas respostas…";fetch(sendUrl(),{mode:"no-cors",cache:"no-store"}).then(function(){window.__snd=false;state.sent=true;save();refresh()},function(){window.__snd=false;go.firstChild.textContent="Tentar de novo ";sendmsg.textContent="Não foi possível enviar agora. Verifique a conexão e toque de novo."});
 });
 function copyText(t,btn,label){
   function done(ok){var o=btn.textContent;if(btn.classList.contains("copy")){btn.textContent=ok?"Copiado":"Selecione e copie";setTimeout(function(){btn.textContent=label},1800)}}
