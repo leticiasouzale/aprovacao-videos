@@ -411,7 +411,7 @@ render();
 
 var ta=$("#when"),btn=$("#sendH"),hmsg=$("#hmsg"),sending=false;
 ta.value=cron.text||"";
-function payload(){return {sid:cron.sid+"-"+(cron.n||0),aprovador:APROVADOR,itens:[{v:"Reunião · próximo alinhamento",s:"Horário sugerido",a:ta.value.trim()}]}}
+function payload(){return {sid:cron.sid+"-"+(cron.n||0),aprovador:APROVADOR,aba:"CRONOGRAMA",itens:[{v:"Reunião · próximo alinhamento",s:"Horário sugerido",a:ta.value.trim()}]}}
 function sendUrl(){return ENDPOINT+(ENDPOINT.indexOf("?")>-1?"&":"?")+"d="+encodeURIComponent(JSON.stringify(payload()))}
 function ui(){
   var has=ta.value.trim().length>0;
