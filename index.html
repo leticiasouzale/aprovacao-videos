@@ -1,3 +1,5 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Aprovação de Vídeos Maximiano</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,7 +50,14 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;
   padding-inline:max(16px,env(safe-area-inset-left,0px));
   background:linear-gradient(var(--ink),rgba(20,24,39,.82));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   border-bottom:1px solid rgba(169,127,78,.16)}
-.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:60px}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:60px}
+.tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:rgba(10,12,22,.45);margin-inline:auto}
+.tab{display:flex;align-items:center;gap:8px;padding:7px 16px;border-radius:999px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .25s,background .25s}
+.tab i{width:6px;height:6px;border-radius:50%;background:var(--gold-hi);flex:none}
+.tab.cr i{background:#4FD1B5}
+.tab:hover{color:var(--paper)}
+.tab[aria-current="page"]{background:rgba(216,185,136,.16);color:var(--paper);box-shadow:inset 0 0 0 1px rgba(216,185,136,.5)}
+@media (max-width:720px){.top .wrap{flex-wrap:wrap;padding-block:10px;row-gap:10px}.tabs{order:3;width:100%;margin:0}.tab{flex:1;justify-content:center;padding:8px 6px;letter-spacing:.08em;font-size:11px}}
 .brand{display:flex;align-items:center;gap:12px;min-width:0}
 .brand .m{width:20px;aspect-ratio:323/520;flex:none}
 .brand .w{height:18px;width:auto;max-width:100%}
@@ -232,6 +241,11 @@ footer{border-top:1px solid var(--line);padding-block:26px calc(34px + env(safe-
       <div class="m gm" style="--img:var(--mark)"></div>
       <div class="w gm" style="--img:var(--word);aspect-ratio:800/236"></div>
     </div>
+    <nav class="tabs" aria-label="Seções">
+      <a class="tab" href="./" aria-current="page"><i></i>Vídeos</a>
+      <a class="tab" href="https://leticiasouzale.github.io/aprovacao-roteiros/" target="_self"><i></i>Roteiros</a>
+      <a class="tab cr" href="cronograma.html"><i></i>Cronograma</a>
+    </nav>
     <div class="count" aria-live="polite"><span class="lbl">Respondidos</span> <b id="cnt">0 / 1</b></div>
   </div>
   <div class="bar"><i id="barfill"></i></div>
